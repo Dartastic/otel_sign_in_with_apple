@@ -3,7 +3,7 @@ description: >-
   OpenTelemetry instrumentation for sign_in_with_apple by Dartastic.io. Adds
   standard OpenTelemetry observability to applications that use
   sign_in_with_apple.
-version: 0.1.0-wip
+version: 0.1.0
 repository: https://github.com/dartastic/otel_sign_in_with_apple
 homepage: https://dartastic.io
 
