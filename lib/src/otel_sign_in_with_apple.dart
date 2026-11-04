@@ -1,15 +1,16 @@
-// Licensed under the Dartastic Pro Software License Agreement.
+// Licensed under the Apache License, Version 2.0
 // Copyright 2025-2026 Mindful Software LLC d/b/a Dartastic.io, All rights reserved.
 
-import 'package:dartastic_opentelemetry/dartastic_opentelemetry.dart';
+import 'package:dartastic_opentelemetry_api/dartastic_opentelemetry_api.dart';
 
 import 'otel_sign_in_with_apple_suppression.dart';
 
 const _tracerName = 'dartastic_otel_libs_sign_in_with_apple';
 
-Tracer _tracer() => OTel.tracerProvider().getTracer(_tracerName);
+APITracer _tracer() => OTelAPI.tracerProvider().getTracer(_tracerName);
 
 class SignInWithAppleResult {
+  /// Creates a result.
   const SignInWithAppleResult({
     this.userIdentifier,
     this.platform,
@@ -56,8 +57,13 @@ class SignInWithAppleResult {
   final String? errorCode;
 }
 
+/// What a traced call returned: the value for the caller plus fields
+/// recorded on the span.
 class SignInWithAppleCallResult<T> {
+  /// Creates a call result.
   const SignInWithAppleCallResult({required this.value, this.result});
+
+  /// The value returned to the caller.
   final T value;
   final SignInWithAppleResult? result;
 }
@@ -82,7 +88,7 @@ Future<T> tracedSignInWithApple<T>({
   final span = _tracer().startSpan(
     'sign_in_with_apple $operation',
     kind: SpanKind.client,
-    attributes: OTel.attributesFromMap(m),
+    attributes: OTelAPI.attributesFromMap(m),
   );
   try {
     final r = await invoke();
@@ -90,19 +96,19 @@ Future<T> tracedSignInWithApple<T>({
       final res = r.result!;
       final extras = <Attribute<Object>>[];
       if (res.userIdentifier != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'sign_in_with_apple.user.id',
           res.userIdentifier!,
         ));
       }
       if (res.platform != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'sign_in_with_apple.platform',
           res.platform!,
         ));
       }
       if (res.credentialState != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'sign_in_with_apple.credential.state',
           res.credentialState!,
         ));
@@ -114,49 +120,49 @@ Future<T> tracedSignInWithApple<T>({
         }
       }
       if (res.realUserStatus != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'sign_in_with_apple.real_user_status',
           res.realUserStatus!,
         ));
       }
       if (res.scopesRequested != null) {
-        extras.add(OTel.attributeStringList(
+        extras.add(OTelAPI.attributeStringList(
           'sign_in_with_apple.scopes.requested',
           res.scopesRequested!,
         ));
       }
       if (res.hasEmail != null) {
-        extras.add(OTel.attributeBool(
+        extras.add(OTelAPI.attributeBool(
           'sign_in_with_apple.has_email',
           res.hasEmail!,
         ));
       }
       if (res.hasFullName != null) {
-        extras.add(OTel.attributeBool(
+        extras.add(OTelAPI.attributeBool(
           'sign_in_with_apple.has_full_name',
           res.hasFullName!,
         ));
       }
       if (res.emailPrivateRelay != null) {
-        extras.add(OTel.attributeBool(
+        extras.add(OTelAPI.attributeBool(
           'sign_in_with_apple.email.private_relay',
           res.emailPrivateRelay!,
         ));
       }
       if (res.identityTokenLength != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'sign_in_with_apple.identity_token.length',
           res.identityTokenLength!,
         ));
       }
       if (res.authorizationCodeLength != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'sign_in_with_apple.authorization_code.length',
           res.authorizationCodeLength!,
         ));
       }
       if (res.errorCode != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'sign_in_with_apple.error.code',
           res.errorCode!,
         ));
@@ -169,13 +175,13 @@ Future<T> tracedSignInWithApple<T>({
           );
         }
       }
-      if (extras.isNotEmpty) span.addAttributes(OTel.attributes(extras));
+      if (extras.isNotEmpty) span.addAttributes(OTelAPI.attributes(extras));
     }
     return r.value;
   } catch (e, st) {
-    span.addAttributes(OTel.attributes([
-      OTel.attributeString(
-        ErrorResource.errorType.key,
+    span.addAttributes(OTelAPI.attributes([
+      OTelAPI.attributeString(
+        ErrorAttributes.errorType.key,
         e.runtimeType.toString(),
       ),
     ]));
